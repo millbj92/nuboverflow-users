@@ -48,37 +48,6 @@ func CreateRoutes(service usr.Service) *fiber.App {
 	return app;
 }
 
-// func New(UserService service.Service) (app App) {
-// 	//Init
-// 	app := fiber.New()
-// 	a := App{
-// 		App: app,
-// 	}
-
-// 	// app.Use(cors.New(cors.Config{
-//     // 	AllowOrigins: "*",
-// 	// 	AllowMethods: "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS",
-//    	// 	AllowHeaders:  "Origin, Content-Type, Accept",
-// 	// }))
-
-	
-
-// 	// Version 1
-// 	v1 := app.Group("/api/v1")
-// 	v1.Get("/users", h.GetAllUsers)
-// 	v1.Post("/users", CreateUser(UserService))
-// 	v1.Get("/users", h.GetUserByEmail)
-// 	v1.Put("/users", h.UpdateUser)
-// 	v1.Get("users/:id", h.GetUserByID)
-// 	v1.Delete("/users/:id", h.DeleteUser)
-// 	v1.Get("/ping", h.Healthcheck)
-// 	v1.Get("/dashboard", monitor.New())
-
-	
-// 	//Ship it
-// 	return a, nil
-// }
-
 func GetAllUsers(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		users, err := service.GetAllUsers()
