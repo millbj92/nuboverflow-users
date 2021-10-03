@@ -1,0 +1,326 @@
+definitions:
+  http.Award:
+    properties:
+      awardDescription:
+        type: string
+      awardLevel:
+        type: integer
+      awardName:
+        type: string
+      awardScore:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
+  http.HttpError:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  http.Interest:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      interest:
+        type: string
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
+  http.User:
+    properties:
+      awards:
+        items:
+          $ref: '#/definitions/http.Award'
+        type: array
+      bio:
+        example: A simple bio.
+        format: string
+        type: string
+      createdAt:
+        example: "2021-10-03T20:54:53.144Z"
+        format: date
+        type: string
+      email:
+        example: test@testemail.com
+        format: email
+        type: string
+      github:
+        example: http://github.com/millbj92
+        format: string
+        type: string
+      id:
+        example: 1
+        format: int64
+        type: integer
+      interests:
+        items:
+          $ref: '#/definitions/http.Interest'
+        type: array
+      linkedIn:
+        example: http://linkedin.com/userName
+        format: string
+        type: string
+      profession:
+        example: Software Developer
+        format: string
+        type: string
+      updatedAt:
+        example: "2021-10-03T20:54:53.144Z"
+        format: date
+        type: string
+      userName:
+        example: nuboverflow_user
+        format: string
+        type: string
+      userScore:
+        example: 1800
+        format: int64
+        type: integer
+      workPlace:
+        example: NASA
+        format: string
+        type: string
+    type: object
+info:
+  contact:
+    email: admin@nuboverflow.com
+    name: Millbj92
+    url: nuboverflow.com
+  description: Used for creation of users within the Nuboverflow domain.
+  license:
+    name: MIT
+    url: https://github.com/millbj92/nuboverflow-users/blob/main/LICENSE
+  title: Nuboverflow - Users Microservice
+  version: "1.0"
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: add by json user
+      parameters:
+      - description: Create user
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/http.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: Create a user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: update by json user
+      parameters:
+      - description: Update user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: Update a user
+      tags:
+      - users
+  /ping:
+    get:
+      description: Ping this endpoint to get a current healthcheck.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: Healthcheck the Users API
+      tags:
+      - users
+  /users:
+    get:
+      description: Get all user accounts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: List all users
+      tags:
+      - users
+  /users/{email}:
+    get:
+      consumes:
+      - application/json
+      description: get user by ID
+      parameters:
+      - description: user search by q
+        format: email
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: Get a user by their email address.
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete by user ID
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/http.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: Delete a user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: get user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.HttpError'
+      summary: Get a single user by their ID
+      tags:
+      - users
+swagger: "2.0"

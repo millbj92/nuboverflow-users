@@ -5,6 +5,9 @@ import (
 	"log"
 	"strconv"
 
+	_ "github.com/millbj92/nuboverflow-users/internal/transport/http/docs"
+
+	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
@@ -23,6 +26,16 @@ type HealthCheckResponse struct {
 	Database    string
 }
 
+// @title Nuboverflow - Users Microservice
+// @version 1.0
+// @description Used for creation of users within the Nuboverflow domain.
+
+// @contact.name Millbj92]
+// @contact.url nuboverflow.com
+// @contact.email admin@nuboverflow.com
+
+// @license.name MIT
+// @license.url https://github.com/millbj92/nuboverflow-users/blob/main/LICENSE
 func CreateRoutes(service usr.Service) *fiber.App {
 
 	app := fiber.New()
@@ -33,6 +46,7 @@ func CreateRoutes(service usr.Service) *fiber.App {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
+	app.Get("/docs/*", swagger.Handler)
 	v1 := app.Group("/api/v1")
 	v1.Get("/users", GetAllUsers(service))
 	v1.Post("/users", CreateUser(service))
@@ -46,6 +60,16 @@ func CreateRoutes(service usr.Service) *fiber.App {
 	return app
 }
 
+// GetAllUsers godoc
+// @Summary List all users
+// @Description Get all user accounts
+// @Tags users
+// @Produce  json
+// @Success 200 {object} model.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users [get]
 func GetAllUsers(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		users, err := service.GetAllUsers()
@@ -62,6 +86,19 @@ func GetAllUsers(service usr.Service) fiber.Handler {
 	}
 }
 
+
+// GetUserByID godoc
+// @Summary Get a single user by their ID
+// @Description get user by ID
+// @Tags users
+// @Accept  int
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} model.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users/{id} [get]
 func GetUserByID(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := intFromString(utils.ImmutableString(c.Params("id")))
@@ -90,6 +127,19 @@ func GetUserByID(service usr.Service) fiber.Handler {
 	}
 }
 
+
+// GetUserByEmail godoc
+// @Summary Get a user by their email address.
+// @Description get user by ID
+// @Tags users
+// @Accept  string
+// @Produce  json
+// @Param q query string false "user search by q" Format(email)
+// @Success 200 {object} model.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users/{email} [get]
 func GetUserByEmail(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		email := c.Query("email")
@@ -107,6 +157,18 @@ func GetUserByEmail(service usr.Service) fiber.Handler {
 	}
 }
 
+// CreateUser godoc
+// @Summary Create a user
+// @Description add by json user
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param account body model.CreateUser true "Create user"
+// @Success 200 {object} model.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /accounts [post]
 func CreateUser(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var requestBody user.User
@@ -131,6 +193,18 @@ func CreateUser(service usr.Service) fiber.Handler {
 	}
 }
 
+// UpdateUser godoc
+// @Summary Update a user
+// @Description update by json user
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param user body model.UpdateUser true "Update user"
+// @Success 200 {object} model.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /accounts [put]
 func UpdateUser(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		usr := new(user.User)
@@ -151,6 +225,18 @@ func UpdateUser(service usr.Service) fiber.Handler {
 	}
 }
 
+// DeleteUser godoc
+// @Summary Delete a user
+// @Description Delete by user ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID" Format(int64)
+// @Success 204 {object} model.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users/{id} [delete]
 func DeleteUser(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := intFromString(utils.ImmutableString(c.Params("id")))
@@ -169,6 +255,16 @@ func DeleteUser(service usr.Service) fiber.Handler {
 	}
 }
 
+// Healthcheck godoc
+// @Summary Healthcheck the Users API
+// @Description Ping this endpoint to get a current healthcheck.
+// @Tags users
+// @Produce  string
+// @Success 200 {object} string
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users/ping [get]
 func Healthcheck() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		err := c.SendString("pong")
