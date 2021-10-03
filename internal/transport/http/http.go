@@ -71,10 +71,12 @@ func GetUserByID(service usr.Service) fiber.Handler {
 		result, err := service.GetUserByID(id)
 		if err != nil {
 			if err.Error() == "record not found" {
-				c.Status(fiber.StatusNotFound).JSON(HttpError{
+				if err := c.Status(fiber.StatusNotFound).JSON(HttpError{
 					Message: "Resource was not found.",
 					Errors:  []error{err},
-				})
+				}); err != nil {
+					return err
+				}
 			}
 			log.Printf("UserService failed to GetUserByID: %s", err)
 			return err
@@ -115,7 +117,7 @@ func CreateUser(service usr.Service) fiber.Handler {
 		if err != nil {
 			if err.Error() == "user exists" {
 				return c.Status(fiber.StatusBadRequest).SendString("User Already Exists")
-				
+
 			} else {
 				log.Printf("Error calling CreateUser: %s", err)
 				return err

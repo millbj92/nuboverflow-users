@@ -31,7 +31,7 @@ func New() (Store, error) {
 	dbDatabase := os.Getenv("DB_DATABASE")
 
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"%s:%s@tcp(%s:%s)/%s",
 		dbUsername,
 		dbPassword,
 		dbHost,
@@ -64,7 +64,7 @@ func (s *store) GetAllUsers() ([]user.User, error) {
 	return users, nil
 }
 
-func (s *store) GetUserByID(id int) (user.User, error){
+func (s *store) GetUserByID(id int) (user.User, error) {
 	var usr user.User
 	if result := s.DB.First(&usr, id); result.Error != nil {
 		return user.User{}, result.Error
@@ -74,8 +74,7 @@ func (s *store) GetUserByID(id int) (user.User, error){
 
 func (s *store) GetUserByEmail(email string) (user.User, error) {
 	var usr user.User
-	if result := s.DB.Where("email = ?", email).First(&usr); 
-	result.Error != nil  {
+	if result := s.DB.Where("email = ?", email).First(&usr); result.Error != nil {
 		log.Println(result.Error.Error())
 		return user.User{}, result.Error
 	}
@@ -86,7 +85,7 @@ func (s *store) CreateUser(usr *user.User) (*user.User, error) {
 	if result := s.DB.Create(usr); result.Error != nil {
 		return nil, result.Error
 	}
-	return usr , nil
+	return usr, nil
 }
 
 func (s *store) UpdateUser(usr user.User) (user.User, error) {
@@ -103,4 +102,3 @@ func (s *store) DeleteUser(id int) error {
 	}
 	return nil
 }
-

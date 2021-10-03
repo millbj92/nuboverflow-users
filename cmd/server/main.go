@@ -23,8 +23,11 @@ func Run() error {
 	if err := app.Listen(":3000"); err != nil {
 		return err
 	}
+	log.Print("App listening on port 3000.")
 	return nil
 }
+
+
 
 func main() {
 	if err := Run(); err != nil {

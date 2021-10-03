@@ -16,9 +16,9 @@ func TestUserService(t *testing.T) {
 	t.Run("Tests get all users", func(t *testing.T) {
 		userStoreMock := NewMockService(mockCtrl)
 		userStoreMock.
-		EXPECT().
-		GetAllUsers().
-		Return([]user.User{}, nil)
+			EXPECT().
+			GetAllUsers().
+			Return([]user.User{}, nil)
 
 		userService := NewService(userStoreMock)
 		users, err := userService.GetAllUsers()
@@ -29,40 +29,39 @@ func TestUserService(t *testing.T) {
 	t.Run("Tests update user", func(t *testing.T) {
 
 		usr := user.User{
-			ID: 4,
+			ID:    4,
 			Email: "test@test.com",
 		}
 		userStoreMock := NewMockService(mockCtrl)
 		userStoreMock.
-		EXPECT().
-		UpdateUser(usr).
-		Return(user.User{
-			ID: 4,
-			Email: "test@test.com",
-		}, nil)
-		
+			EXPECT().
+			UpdateUser(usr).
+			Return(user.User{
+				ID:    4,
+				Email: "test@test.com",
+			}, nil)
+
 		userService := NewService(userStoreMock)
 		user, err := userService.UpdateUser(usr)
 		assert.NoError(t, err)
 		assert.Equal(t, 4, user.ID)
 	})
 
-	t.Run("Tests get user by ID", func(t *testing.T){
+	t.Run("Tests get user by ID", func(t *testing.T) {
 		userStoreMock := NewMockService(mockCtrl)
 		id := 1
 		userStoreMock.
-		EXPECT().
-		GetUserByID(id).
-		
-		Return(user.User{
-			ID: id,
-		}, nil)
+			EXPECT().
+			GetUserByID(id).
+			Return(user.User{
+				ID: id,
+			}, nil)
 
 		userService := NewService(userStoreMock)
 		user, err := userService.GetUserByID(
 			id,
 		)
-		assert.NoError(t, err);
+		assert.NoError(t, err)
 		assert.Equal(t, 1, user.ID)
 	})
 
@@ -72,25 +71,25 @@ func TestUserService(t *testing.T) {
 		email := "test@test.com"
 
 		usr := user.User{
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
-			ID: id,
-			UserName: "",
-			Email: email,
-			Github: "",
-			Linkedin: "",
-			UserScore: 0,
-			Bio: "",
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
+			ID:         id,
+			UserName:   "",
+			Email:      email,
+			Github:     "",
+			Linkedin:   "",
+			UserScore:  0,
+			Bio:        "",
 			Profession: "",
-			WorkPlace: "",
-			Interests: []user.Interest{},
-			Awards: []user.Award{},
+			WorkPlace:  "",
+			Interests:  []user.Interest{},
+			Awards:     []user.Award{},
 		}
 
 		userStoreMock.
-		EXPECT().
-		GetUserByEmail(email).
-		Return(usr, nil)
+			EXPECT().
+			GetUserByEmail(email).
+			Return(usr, nil)
 
 		userService := NewService(userStoreMock)
 		user, err := userService.GetUserByEmail(email)
@@ -99,38 +98,36 @@ func TestUserService(t *testing.T) {
 
 	})
 
-	t.Run("Tests inserting a user", func(t *testing.T){
+	t.Run("Tests inserting a user", func(t *testing.T) {
 		userStoreMock := NewMockService(mockCtrl)
 		id := 1
 		email := "test@test.com"
-		
+
 		usr := user.User{
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
-			ID: id,
-			UserName: "",
-			Email: email,
-			Github: "",
-			Linkedin: "",
-			UserScore: 0,
-			Bio: "",
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
+			ID:         id,
+			UserName:   "",
+			Email:      email,
+			Github:     "",
+			Linkedin:   "",
+			UserScore:  0,
+			Bio:        "",
 			Profession: "",
-			WorkPlace: "",
-			Interests: []user.Interest{},
-			Awards: []user.Award{},
+			WorkPlace:  "",
+			Interests:  []user.Interest{},
+			Awards:     []user.Award{},
 		}
 
-		
+		userStoreMock.
+			EXPECT().
+			CreateUser(&usr).
+			Return(&usr, nil)
 
 		userStoreMock.
-		EXPECT().
-		CreateUser(&usr).
-		Return(&usr, nil)
-
-		userStoreMock.
-		EXPECT().
-		GetUserByEmail(usr.Email).
-		Times(1)
+			EXPECT().
+			GetUserByEmail(usr.Email).
+			Times(1)
 
 		userService := NewService(userStoreMock)
 		user, err := userService.CreateUser(&usr)
@@ -141,15 +138,15 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("Tests delete user", func(t *testing.T) {
-	userStoreMock := NewMockService(mockCtrl)
-	id := 1
-	userStoreMock.
-		EXPECT().
-		DeleteUser(id).
-		Return(nil)
+		userStoreMock := NewMockService(mockCtrl)
+		id := 1
+		userStoreMock.
+			EXPECT().
+			DeleteUser(id).
+			Return(nil)
 
-	userService := NewService(userStoreMock)
-	err := userService.DeleteUser(id)
-	assert.NoError(t, err)
+		userService := NewService(userStoreMock)
+		err := userService.DeleteUser(id)
+		assert.NoError(t, err)
 	})
 }

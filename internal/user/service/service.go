@@ -29,7 +29,7 @@ func NewService(store repository.Store) Service {
 	}
 }
 
-func (s *service) GetAllUsers() ([]user.User, error){
+func (s *service) GetAllUsers() ([]user.User, error) {
 	users, err := s.Store.GetAllUsers()
 	if err != nil {
 		log.Printf("SERVICE ERROR: %s", err.Error())
@@ -57,7 +57,7 @@ func (s *service) GetUserByEmail(email string) (user.User, error) {
 func (s *service) CreateUser(usr *user.User) (*user.User, error) {
 
 	existingUser, err := s.GetUserByEmail(usr.Email)
-	if(err != nil) {
+	if err != nil {
 		log.Println(err)
 	}
 	if existingUser.ID > 0 {
@@ -67,11 +67,11 @@ func (s *service) CreateUser(usr *user.User) (*user.User, error) {
 
 	passBytes := []byte(usr.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 	usr.Password = string(hashedPassword)
-	
+
 	created, err := s.Store.CreateUser(usr)
 	if err != nil {
 		return nil, err
@@ -94,6 +94,3 @@ func (s *service) DeleteUser(id int) error {
 	}
 	return nil
 }
-
-
-

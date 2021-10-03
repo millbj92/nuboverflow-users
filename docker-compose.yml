@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:10.6.4
+    container_name: "users_database"
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=users
+      - MARIADB_USER=admin
+      - MARIADB_PASSWORD=admin
+    networks:
+      - nuboverflow
+
+  #Good little testing UI - recommend turning off for a PROD release.
+  adminer:
+    image: adminer
+    container_name: "users_database-adminer"
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - nuboverflow
+
+  api:
+    build: .
+    restart: always
+    container_name: "users_microservice"
+    environment:
+      - DB_USERNAME=admin
+      - DB_PASSWORD=admin
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=users
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - nuboverflow
+
+networks:
+  nuboverflow:
+    driver: bridge
