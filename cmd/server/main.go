@@ -8,17 +8,6 @@ import (
 	user "github.com/millbj92/nuboverflow-users/internal/user/service"
 )
 
-// @title Nuboverflow - Users Microservice
-// @version 1.0
-// @description Used for creation of users within the Nuboverflow domain.
-
-// @contact.name Millbj92]
-// @contact.url nuboverflow.com
-// @contact.email admin@nuboverflow.com
-
-// @license.name MIT
-// @license.url https://github.com/millbj92/nuboverflow-users/blob/main/LICENSE
-
 func Run() error {
 	userStore, err := repository.New()
 	if err != nil {

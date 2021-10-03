@@ -6,8 +6,8 @@ import (
 
 type User struct {
 	ID         int `json:"id" example:"1" format:"int64"`
-	CreatedAt  time.Time `json:"createdAt" example:"2021-10-03T20:54:53.144Z" format:"date"`
-	UpdatedAt  time.Time `json:"updatedAt" example:"2021-10-03T20:54:53.144Z" format:"date"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 	UserName   string `json:"userName" example:"nuboverflow_user" format:"string"`
 	Password   string `json:"-"`
 	Email      string `json:"email" example:"test@testemail.com" format:"email"`

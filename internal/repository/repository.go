@@ -31,7 +31,7 @@ func New() (Store, error) {
 	dbDatabase := os.Getenv("DB_DATABASE")
 
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s",
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
 		dbUsername,
 		dbPassword,
 		dbHost,
