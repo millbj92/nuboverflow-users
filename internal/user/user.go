@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	ID uint
+	ID int
 	CreatedAt time.Time
 	UpdatedAt time.Time
     UserName string
@@ -17,23 +17,23 @@ type User struct {
     Bio string
     Profession string
     WorkPlace string
-    Interests *[]Interests
-    Awards *[]Award
+    Interests []Interest `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+    Awards []Award `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-type Interests struct {
-	ID uint
+type Interest struct {
+	ID int
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	UserID uint
+	UserID int
 	Interest string
 }
 
 type Award struct {
-	ID uint
+	ID int
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	UserID uint
+	UserID int
     AwardName string
     AwardDescription string
     AwardLevel int8

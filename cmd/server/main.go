@@ -5,7 +5,7 @@ import (
 
 	"github.com/millbj92/nuboverflow-users/internal/repository"
 	"github.com/millbj92/nuboverflow-users/internal/transport/http"
-	"github.com/millbj92/nuboverflow-users/internal/user/service"
+	user "github.com/millbj92/nuboverflow-users/internal/user/service"
 )
 
 func Run() error {
@@ -14,13 +14,13 @@ func Run() error {
 		return err
 	}
 
-	userService := service.New(userStore)
-	app, err := http.New(userService)
+	userService := user.NewService(userStore)
+	app := http.CreateRoutes(userService)
 	if err != nil {
 		return err
 	}
 
-	if err := app.App.Listen(":3000"); err != nil {
+	if err := app.Listen(":3000"); err != nil {
 		return err
 	}
 	return nil

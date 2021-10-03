@@ -1,37 +1,42 @@
-package service
+//go:generate mockgen -destination=user_mocks_test.go -package=user github.com/millbj92/nuboverflow-users/internal/user/service Service
+package user
 
 import (
+	"log"
+
+	"github.com/millbj92/nuboverflow-users/internal/repository"
 	"github.com/millbj92/nuboverflow-users/internal/user"
 )
 
-type Store interface {
+type Service interface {
 	GetAllUsers() ([]user.User, error)
-	GetUserByID(id string) (user.User, error)
+	GetUserByID(id int) (user.User, error)
 	GetUserByEmail(email string) (user.User, error)
-	CreateUser(user user.User) (user.User, error)
+	CreateUser(user *user.User) (*user.User, error)
 	UpdateUser(user user.User) (user.User, error)
-	DeleteUser(id string) error
+	DeleteUser(id int) error
 }
 
-type UserService struct {
-	Store Store
+type service struct {
+	Store repository.Store
 }
 
-func New(store Store) UserService {
-	return UserService{
+func NewService(store repository.Store) Service {
+	return &service{
 		Store: store,
 	}
 }
 
-func (s UserService) GetAllUsers() ([]user.User, error){
+func (s *service) GetAllUsers() ([]user.User, error){
 	users, err := s.Store.GetAllUsers()
 	if err != nil {
+		log.Printf("SERVICE ERROR: %s", err.Error())
 		return []user.User{}, err
 	}
 	return users, nil
 }
 
-func (s UserService) GetUserByID(id string) (user.User, error) {
+func (s *service) GetUserByID(id int) (user.User, error) {
 	usr, err := s.Store.GetUserByID(id)
 	if err != nil {
 		return user.User{}, err
@@ -39,7 +44,7 @@ func (s UserService) GetUserByID(id string) (user.User, error) {
 	return usr, nil
 }
 
-func (s UserService) GetUserByEmail(email string) (user.User, error) {
+func (s *service) GetUserByEmail(email string) (user.User, error) {
 	usr, err := s.Store.GetUserByEmail(email)
 	if err != nil {
 		return user.User{}, err
@@ -47,15 +52,15 @@ func (s UserService) GetUserByEmail(email string) (user.User, error) {
 	return usr, nil
 }
 
-func (s UserService) CreateUser(usr user.User) (user.User, error) {
-	usr, err := s.Store.CreateUser(usr)
+func (s *service) CreateUser(usr *user.User) (*user.User, error) {
+	created, err := s.Store.CreateUser(usr)
 	if err != nil {
-		return user.User{}, err
+		return nil, err
 	}
-	return usr, nil
+	return created, nil
 }
 
-func (s UserService) UpdateUser(usr user.User) (user.User, error) {
+func (s *service) UpdateUser(usr user.User) (user.User, error) {
 	usr, err := s.Store.UpdateUser(usr)
 	if err != nil {
 		return user.User{}, err
@@ -63,7 +68,7 @@ func (s UserService) UpdateUser(usr user.User) (user.User, error) {
 	return usr, nil
 }
 
-func (s UserService) DeleteUser(id string) error {
+func (s *service) DeleteUser(id int) error {
 	err := s.Store.DeleteUser(id)
 	if err != nil {
 		return err
