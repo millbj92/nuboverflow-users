@@ -74,7 +74,9 @@ func (s *store) GetUserByID(id int) (user.User, error){
 
 func (s *store) GetUserByEmail(email string) (user.User, error) {
 	var usr user.User
-	if result := s.DB.Where("Email = ", email).First(&usr); result.Error != nil {
+	if result := s.DB.Where("email = ?", email).First(&usr); 
+	result.Error != nil  {
+		log.Println(result.Error.Error())
 		return user.User{}, result.Error
 	}
 	return usr, nil

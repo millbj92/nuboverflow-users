@@ -9,7 +9,7 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
     UserName string
-	Password string
+	Password string `json:"-"`
     Email string
     Github string
     Linkedin string

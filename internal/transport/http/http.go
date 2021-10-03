@@ -20,10 +20,8 @@ type HttpError struct {
 
 type HealthCheckResponse struct {
 	HTTPService string
-	Database string
+	Database    string
 }
-
-
 
 func CreateRoutes(service usr.Service) *fiber.App {
 
@@ -32,7 +30,7 @@ func CreateRoutes(service usr.Service) *fiber.App {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowMethods: "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS",
-		AllowHeaders:  "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
 	v1 := app.Group("/api/v1")
@@ -45,7 +43,7 @@ func CreateRoutes(service usr.Service) *fiber.App {
 	v1.Get("/ping", Healthcheck())
 	v1.Get("/dashboard", monitor.New())
 
-	return app;
+	return app
 }
 
 func GetAllUsers(service usr.Service) fiber.Handler {
@@ -68,7 +66,7 @@ func GetUserByID(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := intFromString(utils.ImmutableString(c.Params("id")))
 		if err != nil {
-			return err;
+			return err
 		}
 		result, err := service.GetUserByID(id)
 		if err != nil {
@@ -90,20 +88,20 @@ func GetUserByID(service usr.Service) fiber.Handler {
 	}
 }
 
-func  GetUserByEmail(service usr.Service) fiber.Handler {
+func GetUserByEmail(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		email := c.Query("email")
-			user, err := service.GetUserByEmail(email)
-			if err != nil {
-				log.Printf("Error calling GetUserByEmail: %s", err)
-				return err
-			}
-			err = c.JSON(user)
-			if err != nil {
-				log.Printf("Failed to respond to POST /users/email\nEmail: %s\nError: %s", email, err)
-				return err
-			}
-			return nil
+		user, err := service.GetUserByEmail(email)
+		if err != nil {
+			log.Printf("Error calling GetUserByEmail: %s", err)
+			return err
+		}
+		err = c.JSON(user)
+		if err != nil {
+			log.Printf("Failed to respond to POST /users/email\nEmail: %s\nError: %s", email, err)
+			return err
+		}
+		return nil
 	}
 }
 
@@ -115,8 +113,13 @@ func CreateUser(service usr.Service) fiber.Handler {
 		}
 		user, err := service.CreateUser(&requestBody)
 		if err != nil {
-			log.Printf("Error calling CreateUser: %s", err)
-			return err
+			if err.Error() == "user exists" {
+				return c.Status(fiber.StatusBadRequest).SendString("User Already Exists")
+				
+			} else {
+				log.Printf("Error calling CreateUser: %s", err)
+				return err
+			}
 		}
 		if err = c.JSON(user); err != nil {
 			log.Printf("Error responding to POST /users: %s", err)
@@ -129,20 +132,20 @@ func CreateUser(service usr.Service) fiber.Handler {
 func UpdateUser(service usr.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		usr := new(user.User)
-			if err := c.BodyParser(usr); err != nil {
-				log.Printf("Error parsing user: %s", err)
-				return err
-			}
-			user, err := service.UpdateUser(*usr)
-			if err != nil {
-				log.Printf("Error calling UpdateUser %s", err)
-				return err
-			}
-			if err = c.JSON(user); err != nil {
-				log.Printf("Error responding to PUT /users: %s", err)
-				return err
-			}
-			return nil
+		if err := c.BodyParser(usr); err != nil {
+			log.Printf("Error parsing user: %s", err)
+			return err
+		}
+		user, err := service.UpdateUser(*usr)
+		if err != nil {
+			log.Printf("Error calling UpdateUser %s", err)
+			return err
+		}
+		if err = c.JSON(user); err != nil {
+			log.Printf("Error responding to PUT /users: %s", err)
+			return err
+		}
+		return nil
 	}
 }
 
@@ -166,7 +169,8 @@ func DeleteUser(service usr.Service) fiber.Handler {
 
 func Healthcheck() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		err := c.SendString("pong"); if err != nil {
+		err := c.SendString("pong")
+		if err != nil {
 			log.Printf("Error responding to health check: %s", err)
 			return err
 		}
