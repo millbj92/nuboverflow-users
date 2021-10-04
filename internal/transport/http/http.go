@@ -334,7 +334,6 @@ func registerValidators(v *validator.Validate) {
 		unicode.IsDigit,
 	}
 	_ = v.RegisterValidation("passwd", func(fl validator.FieldLevel) bool {	
-		log.Println(fl.Field().String())	
 		if len(fl.Field().String()) < 8 {
 			log.Println("Length < 8??")
 			return false
@@ -342,13 +341,11 @@ func registerValidators(v *validator.Validate) {
 		found := false
 		for _, testRune := range mustHave {
 			for _, r := range fl.Field().String() {
-				log.Println(r)
 				if testRune(r) {
 					found = true
 				}
 			}
 		}
-		log.Println(found)
 		return found
 	})
 }
