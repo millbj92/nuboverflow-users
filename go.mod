@@ -19,7 +19,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.0.0-20211002104244-808efd93c36d // indirect
+	golang.org/x/sys v0.0.0-20211003122950-b1ebd4e1001c // indirect
 )
 
 require (
@@ -38,6 +38,7 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
+	github.com/gofiber/helmet/v2 v2.2.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

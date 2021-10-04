@@ -7,15 +7,16 @@ import (
 	"strconv"
 	"unicode"
 
+	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/go-playground/validator/v10"
-	_ "github.com/millbj92/nuboverflow-users/internal/transport/http/docs"
 	"golang.org/x/crypto/bcrypt"
 
-	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/utils"
+	"github.com/gofiber/helmet/v2"
+	_ "github.com/millbj92/nuboverflow-users/internal/transport/http/docs"
 	"github.com/millbj92/nuboverflow-users/internal/user"
 	usr "github.com/millbj92/nuboverflow-users/internal/user/service"
 )
@@ -51,6 +52,8 @@ func CreateRoutes(service usr.Service, v *validator.Validate) *fiber.App {
 	registerValidators(v)
 
 	app := fiber.New()
+
+	app.Use(helmet.New())
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",

@@ -15,7 +15,7 @@ func Run() error {
 		return err
 	}
 
-	
+
 	userService := user.NewService(userStore)
 	app := http.CreateRoutes(userService, validator.New())
 	if err != nil {

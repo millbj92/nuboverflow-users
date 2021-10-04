@@ -8,10 +8,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=users
-      - MARIADB_USER=admin
-      - MARIADB_PASSWORD=admin
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
     networks:
       - nuboverflow
 
@@ -30,11 +30,11 @@ services:
     restart: always
     container_name: "users_microservice"
     environment:
-      - DB_USERNAME=admin
-      - DB_PASSWORD=admin
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_DATABASE=users
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
     ports:
       - "3000:3000"
     depends_on:
