@@ -3,7 +3,7 @@
 
 ## Running the app:
 
-From the applications root directory, simply input the command:
+First, rename 'example.env' to '.env', then from the applications root directory, simply input the command:
 
 `docker-compose up`
 
