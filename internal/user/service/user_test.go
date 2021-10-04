@@ -82,8 +82,6 @@ func TestUserService(t *testing.T) {
 			Bio:        "",
 			Profession: "",
 			WorkPlace:  "",
-			Interests:  []user.Interest{},
-			Awards:     []user.Award{},
 		}
 
 		userStoreMock.
@@ -115,8 +113,6 @@ func TestUserService(t *testing.T) {
 			Bio:        "",
 			Profession: "",
 			WorkPlace:  "",
-			Interests:  []user.Interest{},
-			Awards:     []user.Award{},
 		}
 
 		userStoreMock.

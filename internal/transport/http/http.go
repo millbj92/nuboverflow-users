@@ -1,11 +1,15 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
+	"unicode"
 
+	"github.com/go-playground/validator/v10"
 	_ "github.com/millbj92/nuboverflow-users/internal/transport/http/docs"
+	"golang.org/x/crypto/bcrypt"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
@@ -26,6 +30,12 @@ type HealthCheckResponse struct {
 	Database    string
 }
 
+type CreateUserRequest struct {
+	UserName   string `json:"username" validate:"required,min=4,max=100"`
+	Password   string `json:"password" validate:"passwd"`
+	Email      string `json:"email" validate:"required,email"`
+}
+
 // @title Nuboverflow - Users Microservice
 // @version 1.0
 // @description Used for creation of users within the Nuboverflow domain.
@@ -36,7 +46,9 @@ type HealthCheckResponse struct {
 
 // @license.name MIT
 // @license.url https://github.com/millbj92/nuboverflow-users/blob/main/LICENSE
-func CreateRoutes(service usr.Service) *fiber.App {
+func CreateRoutes(service usr.Service, v *validator.Validate) *fiber.App {
+
+	registerValidators(v)
 
 	app := fiber.New()
 
@@ -49,7 +61,7 @@ func CreateRoutes(service usr.Service) *fiber.App {
 	app.Get("/docs/*", swagger.Handler)
 	v1 := app.Group("/api/v1")
 	v1.Get("/users", GetAllUsers(service))
-	v1.Post("/users", CreateUser(service))
+	v1.Post("/users", CreateUser(service, v))
 	v1.Get("/users", GetUserByEmail(service))
 	v1.Put("/users", UpdateUser(service))
 	v1.Get("users/:id", GetUserByID(service))
@@ -169,13 +181,43 @@ func GetUserByEmail(service usr.Service) fiber.Handler {
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
 // @Router /accounts [post]
-func CreateUser(service usr.Service) fiber.Handler {
+func CreateUser(service usr.Service, v *validator.Validate) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var requestBody user.User
+		requestBody := CreateUserRequest{}
 		if err := c.BodyParser(&requestBody); err != nil {
 			return c.Status(503).SendString(err.Error())
 		}
-		user, err := service.CreateUser(&requestBody)
+
+		if err := v.Struct(requestBody); err != nil {
+			log.Println(err)
+			return err
+		}
+
+		//Validate if user already exists
+		existingUser, err := service.GetUserByEmail(requestBody.Email)
+		if err != nil {
+			log.Println(err)
+		}
+		if existingUser.ID > 0 {
+			log.Println("Returning error: User exists.")
+		    return errors.New("user exists")
+		}
+
+		//Hash password.
+		passBytes := []byte(requestBody.Password)
+		hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
+		if err != nil {
+			panic(err)
+		}
+		requestBody.Password = string(hashedPassword)
+
+		domainUser := user.User{
+			Email: requestBody.Email,
+			UserName: requestBody.UserName,
+			Password: requestBody.Password,
+		}
+		//Send to service to be stored in the Store.
+		user, err := service.CreateUser(&domainUser)
 		if err != nil {
 			if err.Error() == "user exists" {
 				return c.Status(fiber.StatusBadRequest).SendString("User Already Exists")
@@ -282,4 +324,31 @@ func intFromString(sid string) (int, error) {
 		return 0, err
 	}
 	return int(uid), nil
+}
+
+func registerValidators(v *validator.Validate) {
+	var mustHave = []func(rune) bool{
+		unicode.IsUpper,
+		unicode.IsLower,
+		unicode.IsPunct,
+		unicode.IsDigit,
+	}
+	_ = v.RegisterValidation("passwd", func(fl validator.FieldLevel) bool {	
+		log.Println(fl.Field().String())	
+		if len(fl.Field().String()) < 8 {
+			log.Println("Length < 8??")
+			return false
+		}
+		found := false
+		for _, testRune := range mustHave {
+			for _, r := range fl.Field().String() {
+				log.Println(r)
+				if testRune(r) {
+					found = true
+				}
+			}
+		}
+		log.Println(found)
+		return found
+	})
 }

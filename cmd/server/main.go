@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/millbj92/nuboverflow-users/internal/repository"
 	"github.com/millbj92/nuboverflow-users/internal/transport/http"
 	user "github.com/millbj92/nuboverflow-users/internal/user/service"
@@ -14,8 +15,9 @@ func Run() error {
 		return err
 	}
 
+	
 	userService := user.NewService(userStore)
-	app := http.CreateRoutes(userService)
+	app := http.CreateRoutes(userService, validator.New())
 	if err != nil {
 		return err
 	}

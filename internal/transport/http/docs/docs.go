@@ -31,7 +31,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accounts": {
+        "/users": {
             "put": {
                 "description": "update by json user",
                 "consumes": [
@@ -97,7 +97,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Create user",
-                        "name": "account",
+                        "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -171,9 +171,9 @@ var doc = `{
                 }
             }
         },
-        "/users": {
+        "/users/": {
             "get": {
-                "description": "Get all user accounts",
+                "description": "Get all users",
                 "produces": [
                     "application/json"
                 ],
@@ -360,35 +360,6 @@ var doc = `{
         }
     },
     "definitions": {
-        "http.Award": {
-            "type": "object",
-            "properties": {
-                "awardDescription": {
-                    "type": "string"
-                },
-                "awardLevel": {
-                    "type": "integer"
-                },
-                "awardName": {
-                    "type": "string"
-                },
-                "awardScore": {
-                    "type": "integer"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
         "http.HttpError": {
             "type": "object",
             "properties": {
@@ -403,35 +374,9 @@ var doc = `{
                 }
             }
         },
-        "http.Interest": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "interest": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
         "http.User": {
             "type": "object",
             "properties": {
-                "awards": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/http.Award"
-                    }
-                },
                 "bio": {
                     "type": "string",
                     "format": "string",
@@ -456,12 +401,6 @@ var doc = `{
                     "type": "integer",
                     "format": "int64",
                     "example": 1
-                },
-                "interests": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/http.Interest"
-                    }
                 },
                 "linkedIn": {
                     "type": "string",

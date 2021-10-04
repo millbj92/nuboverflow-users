@@ -43,7 +43,7 @@ func New() (Store, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&user.User{}, &user.Award{}, &user.Interest{})
+	err = db.AutoMigrate(&user.User{})
 
 	if err != nil {
 		log.Println("Failed to migrate database.")

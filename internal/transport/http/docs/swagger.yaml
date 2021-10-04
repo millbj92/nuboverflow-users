@@ -1,23 +1,4 @@
 definitions:
-  http.Award:
-    properties:
-      awardDescription:
-        type: string
-      awardLevel:
-        type: integer
-      awardName:
-        type: string
-      awardScore:
-        type: integer
-      createdAt:
-        type: string
-      id:
-        type: integer
-      updatedAt:
-        type: string
-      userID:
-        type: integer
-    type: object
   http.HttpError:
     properties:
       errors:
@@ -27,25 +8,8 @@ definitions:
       message:
         type: string
     type: object
-  http.Interest:
+http.User:
     properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      interest:
-        type: string
-      updatedAt:
-        type: string
-      userID:
-        type: integer
-    type: object
-  http.User:
-    properties:
-      awards:
-        items:
-          $ref: '#/definitions/http.Award'
-        type: array
       bio:
         example: A simple bio.
         format: string
@@ -66,10 +30,6 @@ definitions:
         example: 1
         format: int64
         type: integer
-      interests:
-        items:
-          $ref: '#/definitions/http.Interest'
-        type: array
       linkedIn:
         example: http://linkedin.com/userName
         format: string
@@ -107,7 +67,7 @@ info:
   title: Nuboverflow - Users Microservice
   version: "1.0"
 paths:
-  /accounts:
+  /users:
     post:
       consumes:
       - application/json
@@ -115,7 +75,7 @@ paths:
       parameters:
       - description: Create user
         in: body
-        name: account
+        name: user
         required: true
         schema:
           $ref: '#/definitions/http.User'
@@ -199,9 +159,9 @@ paths:
       summary: Healthcheck the Users API
       tags:
       - users
-  /users:
+  /users/:
     get:
-      description: Get all user accounts
+      description: Get all users
       produces:
       - application/json
       responses:

@@ -2,12 +2,10 @@
 package user
 
 import (
-	"errors"
 	"log"
 
 	"github.com/millbj92/nuboverflow-users/internal/repository"
 	"github.com/millbj92/nuboverflow-users/internal/user"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -55,23 +53,6 @@ func (s *service) GetUserByEmail(email string) (user.User, error) {
 }
 
 func (s *service) CreateUser(usr *user.User) (*user.User, error) {
-
-	existingUser, err := s.GetUserByEmail(usr.Email)
-	if err != nil {
-		log.Println(err)
-	}
-	if existingUser.ID > 0 {
-		log.Println("Returning error: User exists.")
-		return &user.User{}, errors.New("user exists")
-	}
-
-	passBytes := []byte(usr.Password)
-	hashedPassword, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
-	usr.Password = string(hashedPassword)
-
 	created, err := s.Store.CreateUser(usr)
 	if err != nil {
 		return nil, err
