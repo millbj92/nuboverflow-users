@@ -27,6 +27,7 @@ services:
 
   api:
     build: .
+    image: millbj92/nuboverflow-users:v1
     restart: always
     container_name: "users_microservice"
     environment:
